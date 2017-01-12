@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<head>
+  <script src="js/jquery.js" type="text/javascript"></script>
+  <script src="js/underscore.js" type="text/javascript"></script>
+  <script src="js/backbone.js" type="text/javascript"></script>
+  <script src="js/tmpl.js" type="text/javascript"></script>
+  <script src="js/main.js" type="text/javascript"></script>
+</head>
+
+<div id="res_svg"></div>
+<div id="form_svg"></div>
+
+<script id="tpl_form_svg" type="text/html">
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>Свойство</th>
+        <th>Значение</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td></td>
+        <td>Название</td>
+        <td>
+          <input value="${model.get('name')}"/>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>Размер изображения</td>
+        <td>
+          <input id="width_svg" type="number" style="width:50px;" value="${model.get('width')}"/> x 
+          <input id="height_svg" type="number" style="width:50px;" value="${model.get('height')}"/>
+        </td>
+      </tr>
+      <tr id="prepend_add">
+        <td colspan="3">
+          <button id="add_svg_elem">Добавить объект</button>
+        </td>
+      </tr>
+    </tbody>
+  <table>
+</script>
+
+
+<script id="tpl_add_elem_svg" type="text/html">
+  
+  <tr id="type_${model.cid}" class="first_tr_group">
+    <td rowspan="8">[x]</td>
+    <td>Объект</td>
+    <td>
+      <select class="type_svg">
+        <option value="0"
+          {%if model.get('type') == 0%} selected{%/if%}
+        >-Выбрать объект-</option>
+        {%each(i,form) forms%}
+          <option value="${form.ident}"
+            {%if model.get('type') == form.ident%} selected{%/if%}
+          >${form.name}</option>
+        {%/each%}
+      </select>
+    </td>
+    <td rowspan="8">
+      <div id="res_svg_${model.cid}"></div>
+    </td>
+  </tr>
+  
+  <tr id="fill_${model.cid}" class="center_tr_group">
+    <td>Цвет заливки</td>
+    <td>
+      <select class="fill_svg">
+        <option value="0"
+          {%if model.get('fill') == 0%} selected{%/if%}
+        >-Выбрать цвет-</option>
+        {%each(i,color) colors%}
+          <option value="${color.ident}"
+            {%if model.get('fill') == color.ident%} selected{%/if%}
+          >${color.name}</option>
+        {%/each%}
+      </select>
+    </td>
+  </tr>
+  
+  <tr id="width_${model.cid}" class="center_tr_group">
+    <td>Ширина</td>
+    <td>
+      <input class="w_svg" type="number" value="${model.get('width')}"/>
+    </td>
+  </tr>
+
+  <tr id="height_${model.cid}" class="center_tr_group">
+    <td>Высота</td>
+    <td>
+      <input class="h_svg" type="number" value="${model.get('height')}"/>
+    </td>
+  </tr>
+  
+  <tr id="top_${model.cid}" class="center_tr_group">
+    <td>Отступ сверху</td>
+    <td>
+      <input class="top_svg" type="number" value="${model.get('top')}"/>
+    </td>
+  </tr>
+  
+  <tr id="left_${model.cid}" class="center_tr_group">
+    <td>Отступ слева</td>
+    <td>
+      <input class="left_svg" type="number" value="${model.get('left')}"/>
+    </td>
+  </tr>
+  
+  <tr id="stroke_h_${model.cid}" class="center_tr_group">
+    <td>Толщина рамки</td>
+    <td>
+      <input type="number" value="${model.get('stroke_h')}"/>
+    </td>
+  </tr>
+  
+  <tr id="stroke_c_${model.cid}" class="last_tr_group">
+    <td>Цвет рамки</td>
+    <td>
+      <select>
+        <option value="0"
+          {%if model.get('stroke_c') == 0%} selected{%/if%}
+        >-Выбрать цвет-</option>
+        {%each(i,color) colors%}
+          <option value="${color.ident}"
+            {%if model.get('stroke_c') == color.ident%} selected{%/if%}
+          >${color.name}</option>
+        {%/each%}
+      </select>
+    </td>
+  </tr>
+  
+</script>
+
+<script id="tpl_res_svg" type="text/html">
+  <svg width="${model.get('width')}" height="${model.get('height')}" id="res_svg_obj">
+    {%each(i,el) elems%}
+      {%if el.get('type') == 'rectangle'%}
+        <rect 
+          x="${el.get('left')}" 
+          y="${el.get('top')}" 
+          width="${el.get('width')}" 
+          height="${el.get('height')}"
+          fill="${el.get('fill')}"
+        />
+      {%elif el.get('type') == 'circle'%}
+        <circle 
+          cx="${(Number(el.get('left'))+Number(el.get('width')))/2}" 
+          cy="${(Number(el.get('top'))+Number(el.get('width')))/2}" 
+          r="${el.get('width')/2}"
+          fill="${el.get('fill')}"
+          />
+      {%/if%}
+    {%/each%}
+    Sorry, your browser does not support inline SVG.  
+  </svg>
+</script>
+
+<style>
+  table {
+    border-collapse: collapse;
+  }
+  
+  .first_tr_group td:nth-child(n+2) {
+      padding: 5px;
+      border-top: 2px solid #007eff;
+  }
+  .center_tr_group td {
+      padding: 5px;
+  }
+  
+  .last_tr_group td {
+      padding: 5px;
+      border-bottom: 2px solid #007eff;
+  }
+</style>
